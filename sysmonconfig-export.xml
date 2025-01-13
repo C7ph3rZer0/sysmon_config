@@ -269,7 +269,16 @@
 		<!--DATA: UtcTime, ProcessGuid, ProcessId, Image, User, Protocol, Initiated, SourceIsIpv6, SourceIp, SourceHostname, SourcePort, SourcePortName, DestinationIsIpV6, DestinationIp, DestinationHostname, DestinationPort, DestinationPortName-->
 	<RuleGroup name="" groupRelation="or">
 		<NetworkConnect onmatch="include">
+            <!-- เพิ่ม Public IP -->
+            <RuleName>Monitor Public TCP Connections</RuleName>
+            <DestinationIp condition="is not">127.0.0.1</DestinationIp>
+            <DestinationIp condition="is not">::1</DestinationIp>
+            <DestinationIp condition="is not">192.168.0.0/16</DestinationIp>
+            <DestinationIp condition="is not">10.0.0.0/8</DestinationIp>
+            <DestinationIp condition="is not">172.16.0.0/12</DestinationIp>
+            <Protocol condition="is">tcp</Protocol>
 			<!--Suspicious sources for network-connecting binaries-->
+			<Image condition="is">C:\Windows\System32\ping.exe</Image>
 			<Image name="Usermode" condition="begin with">C:\Users</Image> <!--Tools downloaded by users can use other processes for networking, but this is a very valuable indicator.-->
 			<Image name="Caution" condition="begin with">C:\Recycle</Image> <!--Nothing should operate from the RecycleBin locations.-->
 			<Image condition="begin with">C:\ProgramData</Image> <!--Normally, network communications should be sourced from "Program Files" not from ProgramData, something to look at-->
@@ -363,6 +372,9 @@
 			<DestinationPort name="Tor" condition="is">9001</DestinationPort> <!--Tor protocol [ http://www.computerworlduk.com/tutorial/security/tor-enterprise-2016-blocking-malware-darknet-use-rogue-nodes-3633907/ ] -->
 			<DestinationPort name="Tor" condition="is">9030</DestinationPort> <!--Tor protocol [ http://www.computerworlduk.com/tutorial/security/tor-enterprise-2016-blocking-malware-darknet-use-rogue-nodes-3633907/ ] -->
 		</NetworkConnect>
+		<DnsQuery onmatch="include">
+			<Image condition="is">C:\Windows\System32\ping.exe</Image>
+		</DnsQuery>
 	</RuleGroup>
 
 	<RuleGroup name="" groupRelation="or">
@@ -810,6 +822,7 @@
 
 		<!--DATA: UtcTime, ProcessGuid, ProcessId, Image, TargetFilename, CreationUtcTime, Hash-->
 		<FileCreateStreamHash onmatch="include">
+            <TargetFilename condition="end with">.exe</TargetFilename>
 			<TargetFilename condition="contains">Downloads</TargetFilename> <!--Downloaded files. Does not include "Run" files in IE-->
 			<TargetFilename condition="contains">Temp\7z</TargetFilename> <!--7zip extractions-->
 			<TargetFilename condition="contains">Startup</TargetFilename> <!--ADS startup | Example: [ https://www.hybrid-analysis.com/sample/a314f6106633fba4b70f9d6ddbee452e8f8f44a72117749c21243dc93c7ed3ac?environmentId=100 ] -->
