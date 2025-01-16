@@ -1,18 +1,21 @@
-# sysmon_config
- use for misp and wazuh integreated
+# Sysmon Configuration
+ This repository provides configuration for integrating Sysmon with MISP and Wazuh.
 
+## Sysmon Setup
+ Run the following command to install Sysmon with the provided configuration file:
  .\Sysmon64.exe -accepteula -i sysmonconfig-export.xml
 
+## MISP Scripts
+ 1. Copy the script files to the `/var/ossec/integration/` path.
+ 2. Edit the scripts to include your MISP instance's IP address and authentication keys, then save the changes.
+ 3. Restart the Wazuh manager to apply the changes:
+"systemctl restart wazuh-manager"
 
-# MISP Scripts
- 1. Copy scripts file to /var/ossec/integreation/ path
- 2. Edit scripts with your own MISP instance IP and Auth Keys then save
- 3. restart wazuh manager [systemctrl restart wazuh-manager]
+## MISP Detection Rules (Wazuh)
+ 1. Navigate to the Wazuh rule settings.
+ 2. Add the detection rules by copying the content from `misp_wazuh_rule.xml` and saving it as `misp.xml`.
+ 3. Restart the Wazuh manager to load the new rules:
+"systemctl restart wazuh-manager"
 
-# MISP Detection Rule [Wazuh]
- 1. Go to rule setting 
- 2. add copy rule from misp_wazuh_rule.xml and save name to "misp.xml"
- 3. restart wazuh manager [systemctrl restart wazuh-manager]
-
-# Active-Response
- Read procedures.
+## Active-Response
+ Follow the provided procedures to configure active responses.
